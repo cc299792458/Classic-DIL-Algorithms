@@ -16,7 +16,7 @@ def wrap_env(env_id):
 if __name__ == '__main__':
     env_id = 'CartPole-v1'
     env = wrap_env(env_id)  # Wrap the environment
-    ppo_expert = PPO('MlpPolicy', env, verbose=1).load('./training_logs/ppo_expert')
+    ppo_expert = PPO('MlpPolicy', env, verbose=1).load('./training_logs/'+env_id+'/ppo_expert')
     
     expert_data = dict(obs=[], action=[])
     total_timesteps = int(5e4)

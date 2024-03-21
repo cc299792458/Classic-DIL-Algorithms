@@ -29,3 +29,9 @@ def wrap_env(env_id):
     
 if __name__ == '__main__':
     env_id = 'CartPole-v1'
+
+    # ##### 1. Train an expert #####
+    # ./train_expert.py
+
+    # ##### 2. Load the expert and rollout to collect data #####
+    # ./train_expert.py
