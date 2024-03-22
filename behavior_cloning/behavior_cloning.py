@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from utils.torch_utils import StudentModel, custom_evaluate_model
 from utils.training_utils import plot_loss_curves
+from utils.gym_utils import wrap_env
 
 """
     第一次写了一个BehaviorCloning. 虽然不知道标不标准，但至少结果在CartPole-v1这个简单任务上表现的还是挺好的。
@@ -21,15 +22,17 @@ from utils.training_utils import plot_loss_curves
 """
 
 
-# Create a function to wrap the environment with Monitor and any other wrappers you need
-def wrap_env(env_id, render_mode=None):
-    env = gym.make(env_id, render_mode=render_mode)
-    env = Monitor(env, "./logs/")  # Specify the directory to save the logs
-    env = DummyVecEnv([lambda: env])  # Wrap in a DummyVecEnv for compatibility
-    return env
+# # Create a function to wrap the environment with Monitor and any other wrappers you need
+# def wrap_env(env_id, render_mode=None):
+#     env = gym.make(env_id, render_mode=render_mode)
+#     env = Monitor(env, "./logs/")  # Specify the directory to save the logs
+#     env = DummyVecEnv([lambda: env])  # Wrap in a DummyVecEnv for compatibility
+#     return env
 
 if __name__ == '__main__':
-    env_id = 'CartPole-v1'
+    # env_id = 'CartPole-v1'
+    env_id = 'LunarLander-v2'
+
     # ##### 1. Train an expert #####
     # ./train_expert.py
 
@@ -37,10 +40,17 @@ if __name__ == '__main__':
     # ./train_expert.py
 
     # # ##### 3. Create the StudentModel Object and Train it
-    # cur_dir = os.path.dirname(os.path.abspath(__file__))
-    # expert_data = np.load('./data_collecting_logs/expert_data.npy', allow_pickle=True).item()
+
+    # cur_dir = os.path.dirname(os.path.abspath(__file__)) + '/' + env_id + '/'
+    # log_dir = cur_dir + 'logs/'
+    # data_dir = './data_collecting_logs/' + env_id + '/'
+    # data_path = data_dir + 'expert_data.npy'
+
+    # os.makedirs(log_dir, exist_ok=True)
+    
+    # expert_data = np.load(data_path, allow_pickle=True).item()
     # expert_obs = expert_data['obs'].squeeze()
-    # expert_action = expert_data['action']
+    # expert_action = expert_data['action'] if 'action' in expert_data.keys() else expert_data['actions']
     # expert_obs_t = torch.tensor(expert_obs).type(torch.float32)
     # expert_action_t = torch.tensor(expert_action).type(torch.long).squeeze()
     
@@ -58,8 +68,8 @@ if __name__ == '__main__':
     # training_losses = []
     # validation_losses = []
     # best_val_loss = float('inf')
-    # best_student_model_path = os.path.join(cur_dir, 'logs/best_student_model.pth')
-    # final_student_model_path = os.path.join(cur_dir, 'logs/final_student_model.pth')
+    # best_student_model_path = os.path.join(log_dir, 'best_student_model.pth')
+    # final_student_model_path = os.path.join(log_dir, 'final_student_model.pth')
     # # patience_counter = 0
     # # patience = 5
     # for epoch in tqdm(range(num_epochs)):
@@ -105,7 +115,7 @@ if __name__ == '__main__':
     # plot_loss_curves(training_losses, validation_losses_full)
 
     ##### 4. Load the student model and evaluate it.
-    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    cur_dir = os.path.dirname(os.path.abspath(__file__)) + '/' + env_id + '/'
     best_student_model_path = os.path.join(cur_dir, 'logs/best_student_model.pth')
     env = wrap_env(env_id, render_mode=None)    # render_mode='human'  
     input_dim = env.observation_space.shape[0]
