@@ -6,7 +6,8 @@ from utils.gym_utils import wrap_env
 
 if __name__ == '__main__':
     ##### Train the expert #####
-    env_id = 'LunarLander-v2'
+    # env_id = 'LunarLander-v2'
+    env_id = 'CarRacing-v2'
     cur_path = './training_logs/'+env_id+'/'
     # Ensure the log directory exists
     os.makedirs(cur_path, exist_ok=True)
@@ -21,7 +22,7 @@ if __name__ == '__main__':
                                  render=False)
 
     # Check if a pre-trained model exists
-    model_path = cur_path+'ppo_expert.zip'
+    model_path = cur_path + 'ppo_expert.zip'
     if os.path.exists(model_path):
         ppo = PPO.load(model_path, env=env)
         print("Loaded a previously trained model.")
